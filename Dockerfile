@@ -1,13 +1,17 @@
+# ---- Base image ----
 FROM php:8.3-apache
 
-# Enable modules
+# Enable required Apache modules
 RUN a2enmod rewrite headers proxy proxy_http
 
-# App files
+# (Optional) If you need PHP extensions, install them here
+# RUN docker-php-ext-install pdo pdo_mysql
+
+# ---- App files ----
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-# Write a vhost that proxies /hls/ and adds CORS
+# ---- VirtualHost: proxy /hls/ and set CORS only for that path ----
 RUN set -eux; \
   cat >/etc/apache2/sites-available/steps-proxy.conf <<'APACHECONF'
 <VirtualHost *:80>
@@ -16,10 +20,11 @@ RUN set -eux; \
 
     ProxyPreserveHost On
 
-    # Change upstream if needed
+    # Change the upstream if needed
     ProxyPass        /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/ retry=0
     ProxyPassReverse /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/
 
+    # CORS limited to /hls/
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
         Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
@@ -35,18 +40,24 @@ RUN set -eux; \
 </VirtualHost>
 APACHECONF
 
-# Activate the site (separate RUN so Docker doesn't parse 'a2dissite' as an instruction)
+# Activate site and disable default
 RUN a2dissite 000-default && a2ensite steps-proxy
 
-# Optional: honor $PORT on platforms like Render
+# ---- Make Apache honor $PORT at runtime (Render) ----
 RUN set -eux; \
-  printf '%s\n' \
-    'if [ -n "$PORT" ]; then' \
-    '  sed -ri "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf;' \
-    '  sed -ri "s#<VirtualHost \*:80>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/steps-proxy.conf;' \
-    'fi' \
-  > /docker-entrypoint-initapache2.d/01-render-port.sh && \
+  mkdir -p /docker-entrypoint-initapache2.d; \
+  cat >/docker-entrypoint-initapache2.d/01-render-port.sh <<'SH'; \
   chmod +x /docker-entrypoint-initapache2.d/01-render-port.sh
+#!/bin/sh
+set -eu
+if [ -n "${PORT:-}" ]; then
+  sed -ri "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
+  sed -ri "s#<VirtualHost \*:80>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/steps-proxy.conf
+fi
+SH
 
+# Expose default port (Render may override with $PORT)
 EXPOSE 80
+
+# Start Apache
 CMD ["apache2-foreground"]
