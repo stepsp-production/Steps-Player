@@ -24,8 +24,8 @@ RUN set -eux; \
     ProxyPreserveHost Off
     SSLProxyEngine On
 
-   ProxyPass        /hls/  https://46.152.153.249/hls/ retry=0
-   ProxyPassReverse /hls/  https://46.152.153.249/hls/
+   ProxyPass        /hls/  http://46.152.153.249/hls/ retry=0
+   ProxyPassReverse /hls/  http://46.152.153.249/hls/
    
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
