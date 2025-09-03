@@ -15,7 +15,7 @@ RUN set -eux; \
 
     ProxyPreserveHost On
     # بدّل http://YOUR_ORIGIN إلى عنوان سيرفر البث الحقيقي (مثلاً http://stream.yourdomain.com)
-    ProxyPass        /hls/  http://46.152.153.249/hls/live5/playlist.m3u8/hls/ retry=0
+    ProxyPass        /hls/  http://46.152.153.249/hls/
     ProxyPassReverse /hls/  http://hls-proxy-iphq.onrender.com/hls/
 
     # CORS أساسي لملفات HLS
