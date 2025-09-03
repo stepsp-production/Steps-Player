@@ -10,7 +10,7 @@ COPY . /var/www/html
 # أضف إعداد موقع يمرّر /hls/ إلى سيرفر البث (بدّل YOUR_ORIGIN)
 RUN set -eux; \
   echo '<VirtualHost *:80>
-    steps-player _
+    server name _ steps player
     DocumentRoot /var/www/html
 
     ProxyPreserveHost On
