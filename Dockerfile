@@ -20,11 +20,9 @@ RUN set -eux; \
 
     ProxyPreserveHost On
 
-    # Change the upstream if needed
     ProxyPass        /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/ retry=0
     ProxyPassReverse /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/
 
-    # CORS limited to /hls/
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
         Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
@@ -46,8 +44,7 @@ RUN a2dissite 000-default && a2ensite steps-proxy
 # ---- Make Apache honor $PORT at runtime (Render) ----
 RUN set -eux; \
   mkdir -p /docker-entrypoint-initapache2.d; \
-  cat >/docker-entrypoint-initapache2.d/01-render-port.sh <<'SH'; \
-  chmod +x /docker-entrypoint-initapache2.d/01-render-port.sh
+  cat >/docker-entrypoint-initapache2.d/01-render-port.sh <<'SH'
 #!/bin/sh
 set -eu
 if [ -n "${PORT:-}" ]; then
@@ -55,6 +52,7 @@ if [ -n "${PORT:-}" ]; then
   sed -ri "s#<VirtualHost \*:80>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/steps-proxy.conf
 fi
 SH
+RUN chmod +x /docker-entrypoint-initapache2.d/01-render-port.sh
 
 # Expose default port (Render may override with $PORT)
 EXPOSE 80
