@@ -26,7 +26,7 @@ function clean_url(?string $s): ?string {
   return $s;
 }
 
-$title = isset($_GET['title']) && $_GET['title'] !== '' ? $_GET['title'] : 'Steps Production Co Player';
+$title = isset($_GET['title']) && $_GET['title'] !== '' ? $_GET['title'] : 'Steps-Player';
 
 $defaultSources = [
   'main' => '/hls/live/playlist.m3u8',
