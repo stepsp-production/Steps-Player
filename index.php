@@ -29,7 +29,7 @@ function clean_url(?string $s): ?string {
 $title = isset($_GET['title']) && $_GET['title'] !== '' ? $_GET['title'] : 'Steps Production Co Player';
 
 $defaultSources = [
-  'main' => 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8&',
+  'main' => '/hls/x36xhzz/x36xhzz.m3u8&',
   'cam1' => '/hls/lastone/playlist.m3u8',
   'cam2' => '/hls/live2/playlist.m3u8',
   'cam3' => '/hls/live3/playlist.m3u8',
