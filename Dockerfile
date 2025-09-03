@@ -10,7 +10,7 @@ COPY . /var/www/html
 # أضف إعداد موقع يمرّر /hls/ إلى سيرفر البث (بدّل YOUR_ORIGIN)
 RUN set -eux; \
   echo '<VirtualHost *:80>
-    server name _ https://46.152.153.249
+    server name _ http://46.152.153.249
     DocumentRoot /var/www/html
 
     ProxyPreserveHost On
