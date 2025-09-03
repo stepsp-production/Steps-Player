@@ -5,7 +5,8 @@ FROM php:8.3-apache
 RUN a2enmod rewrite headers proxy proxy_http
 
 # (Optional) If you need PHP extensions, install them here
-# RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql
+RUN a2enmod ssl
 
 # ---- App files ----
 WORKDIR /var/www/html
@@ -18,11 +19,14 @@ RUN set -eux; \
     ServerName localhost
     DocumentRoot /var/www/html
 
-    ProxyPreserveHost On
 
-    ProxyPass        /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/ retry=0
-    ProxyPassReverse /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/
 
+    ProxyPreserveHost Off
+    SSLProxyEngine On
+
+   ProxyPass        /hls/  https://46.152.153.249/hls/ retry=0
+   ProxyPassReverse /hls/  https://46.152.153.249/hls/
+   
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
         Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
