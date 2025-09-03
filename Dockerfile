@@ -10,13 +10,13 @@ COPY . /var/www/html
 # أضف إعداد موقع يمرّر /hls/ إلى سيرفر البث (بدّل YOUR_ORIGIN)
 RUN set -eux; \
   echo '<VirtualHost *:80>
-    server name _ 
+    server name _ https://46.152.153.249
     DocumentRoot /var/www/html
 
     ProxyPreserveHost On
     # بدّل http://YOUR_ORIGIN إلى عنوان سيرفر البث الحقيقي (مثلاً http://stream.yourdomain.com)
-    ProxyPass     /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/
-
+    ProxyPass     /hls/  http:///hls/  retry=0
+    ProxyPreserve  /hls/  http://stream.hls-proxy-iphq.onrender.com/hls/
     # CORS أساسي لملفات HLS
     Header always set Access-Control-Allow-Origin "*"
     Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
