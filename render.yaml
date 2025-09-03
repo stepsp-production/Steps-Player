@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: steps-player
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    healthCheckPath: /
+    autoDeploy: true
