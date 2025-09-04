@@ -23,7 +23,7 @@ RUN set -eux; \
     ProxyPreserveHost Off
     SSLProxyEngine On
     SSLProxyVerify none
-    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerName on
     SSLProxyCheckPeerCN off
 
    ProxyPass        /hls/  https://46.152.153.249/hls/ retry=0
