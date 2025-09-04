@@ -20,9 +20,11 @@ RUN set -eux; \
     DocumentRoot /var/www/html
 
 
-
     ProxyPreserveHost Off
     SSLProxyEngine On
+    SSLProxyVerify none
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerCN off
 
    ProxyPass        /hls/  https://46.152.153.249/hls/ retry=0
    ProxyPassReverse /hls/  https://46.152.153.249/hls/
@@ -32,6 +34,12 @@ RUN set -eux; \
         Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
         Header always set Access-Control-Expose-Headers "Content-Length, Content-Range"
         Header always set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+    </Location>
+
+# رد فوري لطلبات preflight لتفادي أي التباس
+        RewriteEngine On
+        RewriteCond %{REQUEST_METHOD} =OPTIONS
+        RewriteRule ^ - [R=204,L]
     </Location>
 
     <Directory /var/www/html>
