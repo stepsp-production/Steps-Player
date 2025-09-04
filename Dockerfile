@@ -12,26 +12,32 @@ RUN a2enmod ssl
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-# ---- VirtualHost: proxy /hls/ and set CORS only for that path ----
-RUN set -eux; \
-  cat >/etc/apache2/sites-available/steps-proxy.conf <<'APACHECONF'
 <VirtualHost *:80>
     ServerName localhost
     DocumentRoot /var/www/html
 
-
-
-    ProxyPreserveHost on
+    # مهم: Proxy عبر HTTPS إلى IP قد يملك شهادة لا تطابق الاسم
+    ProxyPreserveHost Off
     SSLProxyEngine On
+    SSLProxyVerify none
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerCN off
 
-   ProxyPass        /hls/  http://46.152.153.249/hls/ retry=0
-   ProxyPassReverse /hls/  http://46.152.153.249/hls/
-   
+    # التوجيه إلى السيرفر الخلفي
+    ProxyPass        /hls/  https://46.152.153.249/hls/ retry=0
+    ProxyPassReverse /hls/  https://46.152.153.249/hls/
+
+    # CORS على مسار /hls/ فقط
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
         Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
         Header always set Access-Control-Expose-Headers "Content-Length, Content-Range"
         Header always set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+
+        # رد فوري لطلبات preflight لتفادي أي التباس
+        RewriteEngine On
+        RewriteCond %{REQUEST_METHOD} =OPTIONS
+        RewriteRule ^ - [R=204,L]
     </Location>
 
     <Directory /var/www/html>
