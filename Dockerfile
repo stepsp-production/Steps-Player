@@ -21,7 +21,7 @@ RUN set -eux; \
 
 
 
-    ProxyPreserveHost on
+    ProxyPreserveHost off
     SSLProxyEngine On
 
    ProxyPass        /hls/  http://46.152.153.249/hls/ retry=0
@@ -29,7 +29,7 @@ RUN set -eux; \
    
     <Location /hls/>
         Header always set Access-Control-Allow-Origin "*"
-        Header always set Access-Control-Allow-Headers "Range, Origin, Accept, User-Agent"
+        Header always set Access-Control-Allow-Headers "Range, Origin, Accept, Us"
         Header always set Access-Control-Expose-Headers "Content-Length, Content-Range"
         Header always set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
     </Location>
