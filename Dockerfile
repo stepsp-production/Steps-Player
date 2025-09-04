@@ -21,7 +21,7 @@ RUN set -eux; \
 
 
 
-    ProxyPreserveHost Off
+    ProxyPreserveHost on
     SSLProxyEngine On
 
    ProxyPass        /hls/  http://46.152.153.249/hls/ retry=0
