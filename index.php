@@ -37,7 +37,7 @@ $defaultSources = [
   'cam4' => '/hls/live4/playlist.m3u8',
   'cam5' => '/hls/live5/playlist.m3u8',
   'cam6' => '/hls/live6/playlist.m3u8',
-  'cam7' => '/hls/live7/playlist.m3u8',
+  'cam7' => '/hls/live7/playlist.m3u8'
 ];
 
 $sources = $defaultSources;
@@ -361,7 +361,7 @@ foreach ($defaultSources as $k => $_) {
       // كشف تجمّد حقيقي (كل 2.5ث) ثم ندفعة مرة واحدة
       let lastT=0, stuck=0;
       const chk=()=>{ const t=video.currentTime||0; if(video.readyState>=2 && !video.paused){ if(Math.abs(t-lastT)<0.02){ if(++stuck>=2){ stuck=0; nudge(); } } else stuck=0; lastT=t; } };
-      setInterval(chk, 2500);
+      setInterval(chk, 2000);
     }
 
     /* DOM */
